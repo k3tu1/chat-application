@@ -15,17 +15,52 @@
 
         <div class="centered-form__box">
             <h1>Join</h1>
-            <form action="./chat.html">
-                <label for="">Display name</label>
+            <form id="initialForm" action="./chat.html">
+                <label for="username">Display name</label>
                 <input type="text" name="username" placeholder="Display name" required>
-                <label for="">Room</label>
-                <input type="text" name="room" placeholder="Room" required>
+
+                <label for="room">Room</label>
+                <input type="text" name="room" placeholder="Room" id="room" required>
+
+
+                <input type="checkbox" class="styled-checkbox" name="private" id="private"
+                    style="width: 0% !important;">
+                <label for="private">Enable private chat</label>
+
+                <h3 style="text-align: center;">OR</h3>
+
+                <label for="room">Select any active room</label>
+                <select id="activeRooms">
+                    <option value="" style="display: none;">Please Select a room</option>
+                </select>
                 <button>join</button>
             </form>
         </div>
 
     </div>
-
+    <script src="/socket.io/socket.io.js"></script>
 </body>
+<script>
+    const socket = io()
+    const $initialForm = document.getElementById('initialForm')
+    const $roomInput = document.getElementById('room')
+    const $roomSelect = document.getElementById('activeRooms')
+    socket.emit('roomList', 'hello', (cb) => {
+        if (cb.length) {
+            cb.forEach(ele => {
+                $roomSelect.add(new Option(ele, ele))
+            });
+            return
+        }
+        $roomSelect.options[0].text = 'Sorry, No Active rooms'
+        $roomSelect.setAttribute('disabled', true)
+    })
+    $roomSelect.addEventListener('change', (e) => {
+        $roomInput.value = e.target.value
+    })
+    $roomInput.addEventListener('change', (e) => {
+        $roomSelect.value = ''
+    })
+</script>
 
 </html>

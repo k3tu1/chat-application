@@ -11,7 +11,7 @@ const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationTemplate = document.querySelector('#location-template').innerHTML
 const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 
-const { username, room } = Qs.parse(location.search, {
+const { username, room, private } = Qs.parse(location.search, {
     ignoreQueryPrefix: true
 })
 
@@ -98,7 +98,7 @@ $locationButton.addEventListener('click', () => {
     })
 })
 
-socket.emit('join', { username, room }, (error) => {
+socket.emit('join', { username, room, private }, (error) => {
     if (error) {
         alert(error)
         location.href = '/'

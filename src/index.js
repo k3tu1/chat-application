@@ -4,7 +4,7 @@ const express = require('express')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
 const { generateMessage, generateLocationMessage } = require('./utils/messages')
-const { addUser, removeUser, getUser, getUserInRoom } = require('./utils/users')
+const { addUser, removeUser, getUser, getUserInRoom, getPublicRoomList } = require('./utils/users')
 
 
 const app = express()
@@ -28,8 +28,8 @@ io.on('connection', (socket) => {
     // socket.broadcast.emit('message', generateMessage('A new user has joined!'))// send message to everyone except that connection
 
     //io.to.emit -> to send everyone for spcefic room
-    socket.on('join', ({ username, room }, cb) => {
-        const { error, user } = addUser({ id: socket.id, username, room })
+    socket.on('join', ({ username, room, private }, cb) => {
+        const { error, user } = addUser({ id: socket.id, username, room, private })
 
         if (error) {
             return cb(error)
@@ -69,6 +69,9 @@ io.on('connection', (socket) => {
         const user = getUser(socket.id)
         io.to(user.room).emit('locationMessage', generateLocationMessage(user.username, `https://google.com/maps?q=${coords.latitude},${coords.longitude}`))
         cb()
+    })
+    socket.on('roomList', (msg, cb) => {
+        cb(getPublicRoomList())
     })
 })
 

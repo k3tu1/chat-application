@@ -1,9 +1,10 @@
 const users = []
 
-const addUser = ({ id, username, room }) => {
+const addUser = ({ id, username, room, private }) => {
 
     username = username.trim().toLowerCase()
     room = room.trim().toLowerCase()
+    private = private == 'on' ? true : false
 
     if (!username || !room) {
         return {
@@ -20,7 +21,7 @@ const addUser = ({ id, username, room }) => {
             error: 'Username is in use!'
         }
     }
-    const user = { id, username, room }
+    const user = { id, username, room, private }
     users.push(user)
     return { user }
 }
@@ -40,6 +41,10 @@ const getUserInRoom = (room) => {
     return users.filter((user) => user.room === room)
 }
 
+const getPublicRoomList = () => {
+    return users.filter((user) => user.private == false).map((user) => user.room)
+}
+
 module.exports = {
-    addUser, removeUser, getUser, getUserInRoom
+    addUser, removeUser, getUser, getUserInRoom, getPublicRoomList
 }
